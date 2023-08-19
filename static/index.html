@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Identify Contact</title>
+    <script>
+        function callIdentifyEndpoint() {
+            // Get email and phone number values from the input fields
+            var email = document.getElementById('email').value;
+            var phoneNumber = document.getElementById('phoneNumber').value;
+
+            // Prepare the payload
+            var payload = {
+                email: email,
+                phoneNumber: phoneNumber
+            };
+
+            // Define the endpoint URL
+            var url = 'http://127.0.0.1:8000/identify';
+
+            // Make a POST request to the endpoint
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Display the JSON response in the div element
+                    document.getElementById('response').textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+                
+        }
+    </script>
+</head>
+
+<body>
+    <h1>Enter Contact Details</h1>
+    <label for="email">Email:</label>
+    <input type="text" id="email" name="email"><br><br>
+    <label for="phoneNumber">Phone Number:</label>
+    <input type="text" id="phoneNumber" name="phoneNumber"><br><br>
+    <button onclick="callIdentifyEndpoint()">Submit</button>
+    <div id="response"></div>
+</body>
+
+</html>
