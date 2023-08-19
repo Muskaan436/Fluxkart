@@ -39,9 +39,9 @@ def get_primary_contact(email: Optional[str], phone_number: Optional[str]):
          primary_contact = contacts[0]
          return primary_contact
 
-    if contacts is None and (email or phone_number):
+    if len(contacts)==0  and (email or phone_number):
         current_time = datetime.utcnow() 
-        contact = Contact(
+        primary_contact = Contact(
             email=email,
             phoneNumber=phone_number,
             linkedId="",
@@ -49,11 +49,11 @@ def get_primary_contact(email: Optional[str], phone_number: Optional[str]):
             createdAt=current_time, 
             updatedAt=current_time  
         )
-        session.add(contact)
+        session.add(primary_contact)
         session.commit()
-        session.refresh(contact)
+        session.refresh(primary_contact)
+        session.close()
         
-
     return primary_contact
 
 
