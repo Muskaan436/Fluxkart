@@ -18,12 +18,6 @@ async def identify_contact(request: IdentifyRequest) -> IdentifyResponse:
     
     secondary_contacts = get_secondary_contacts(primary_contact.id,request.email,request.phoneNumber)
 
-    
-
-
-        
-    
-
     contact = Contact(
         primaryContatctId=primary_contact.id,
         emails=[primary_contact.email] + [sec.email for sec in secondary_contacts if sec.email!=primary_contact.email],
