@@ -13,8 +13,8 @@ SessionLocal=sessionmaker(bind=engine,autocommit=False,autoflush=False)
 
 
 #To find all the primary contacts on the basis of given email and phonenumber
-def get_primary_contact(email: Optional[str], phone_number: Optional[str]):
-    session = SessionLocal()
+def get_primary_contact(session,email: Optional[str], phone_number: Optional[str]):
+    
     query = session.query(Contact).filter(
         (Contact.email == email) | (Contact.phoneNumber == phone_number),
         Contact.linkPrecedence == "primary"
@@ -39,27 +39,16 @@ def get_primary_contact(email: Optional[str], phone_number: Optional[str]):
          primary_contact = contacts[0]
          return primary_contact
 
-    if len(contacts)==0  and (email or phone_number):
-        current_time = datetime.utcnow() 
-        primary_contact = Contact(
-            email=email,
-            phoneNumber=phone_number,
-            linkedId="",
-            linkPrecedence="primary",
-            createdAt=current_time, 
-            updatedAt=current_time  
-        )
-        session.add(primary_contact)
-        session.commit()
-        session.refresh(primary_contact)
-        session.close()
+   
+       
+        
         
     return primary_contact
 
 
 #to find all the secondary contacts related to that primary contact
-def get_secondary_contacts(primary_contact_id: int,email:Optional[str],phone_number:Optional[str]):
-    session = SessionLocal()
+def get_secondary_contacts(session,primary_contact_id: int,email:Optional[str],phone_number:Optional[str]):
+    
     query = session.query(Contact).filter(Contact.linkedId == primary_contact_id)
     secondary_contacts = query.all()
 
@@ -71,10 +60,30 @@ def get_secondary_contacts(primary_contact_id: int,email:Optional[str],phone_num
             linkedId=primary_contact_id,
             linkPrecedence="secondary",
             createdAt=current_time,
-            updatedAt=current_time
+            updatedAt=current_time,
+           
         )
         session.add(secondary_contact)
         session.commit()
         secondary_contacts = [secondary_contact]
     
     return secondary_contacts
+
+
+
+
+def create_primary_contact(session,email:Optional[str],phone_number:Optional[str]):
+
+    current_time = datetime.utcnow() 
+    contact = Contact(
+            email=email,
+            phoneNumber=phone_number,
+            linkedId="",
+            linkPrecedence="primary",
+            createdAt=current_time, 
+            updatedAt=current_time ,
+            
+        )
+    session.add(contact)
+    session.commit()
+    return contact
